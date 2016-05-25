@@ -44,7 +44,7 @@ func (a AccessCreds) GetCreds(vbackend string, inout string, kvault bool) (Acces
 	return ac, VAULT_CREDENTIAL_ERROR
 }
 
-func cbqd() {
+func Cbqd() {
 	flag.Parse()
 	db := &Database{}
 
