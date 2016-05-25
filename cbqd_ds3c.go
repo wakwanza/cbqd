@@ -7,6 +7,12 @@ import (
 	"path/filepath"
 )
 
+var (
+	cbucket   = os.Getenv("CBQD_S3_BCKT")
+	clocation = os.Getenv("CBQD_S3_HOST")
+	cregion   = os.Getenv("CBQD_S3_REGION")
+)
+
 type AWS struct {
 }
 
@@ -21,7 +27,6 @@ func (a AWS) CloudSend(s AccessCreds, cobject string, cpath string) error {
 	if err != nil {
 		return err
 	}
-	cbucket := os.Getenv("CBQD_S3_BCKT")
 	if cbucket == "" {
 		return S3_BUCKET_ERROR_1
 	}
@@ -44,7 +49,6 @@ func (a GCS) CloudSend(s AccessCreds, cobject string, cpath string) error {
 	if err != nil {
 		return err
 	}
-	cbucket := os.Getenv("CBQD_S3_BCKT")
 	if cbucket == "" {
 		return S3_BUCKET_ERROR_1
 	}
@@ -63,7 +67,6 @@ func (a GCS) CloudSend(s AccessCreds, cobject string, cpath string) error {
 }
 
 func (a ALT) CloudSend(s AccessCreds, cobject string, cpath string) error {
-	clocation := os.Getenv("CBQD_S3_HOST")
 	if clocation == "" {
 		return S3_BUCKET_ERROR_3
 	}
@@ -71,7 +74,6 @@ func (a ALT) CloudSend(s AccessCreds, cobject string, cpath string) error {
 	if err != nil {
 		return err
 	}
-	cbucket := os.Getenv("CBQD_S3_BCKT")
 	if cbucket == "" {
 		return S3_BUCKET_ERROR_1
 	}

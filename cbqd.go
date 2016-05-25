@@ -44,15 +44,19 @@ func (a AccessCreds) GetCreds(vbackend string, inout string, kvault bool) (Acces
 	return ac, VAULT_CREDENTIAL_ERROR
 }
 
+func (d Database) SetTarget(ac AccessCreds, h string, p string) Database {
+	return Database{Ukey: ac, Host: h, Port: p}
+}
+
 func Cbqd() {
 	flag.Parse()
-	db := &Database{}
 
 	increds, err := new(AccessCreds).GetCreds(*dbflag, "CBQD_IN", *kvflag)
 	if err != nil {
 		log.Fatalln(err)
 	}
 
+	db := &Database.SetTarget(increds, *dhflag, *dpflag)
 	outcreds, err := new(AccessCreds).GetCreds(*csflag, "CBQD_OUT", *kvflag)
 	if err != nil {
 		log.Fatalln(err)
@@ -64,10 +68,6 @@ func Cbqd() {
 	}
 
 	defer os.RemoveAll(topdir)
-
-	db.Ukey = increds
-	db.Port = *dpflag
-	db.Host = *dhflag
 	tmpfhandle := filepath.Join(topdir, "tmpfile")
 
 	bname, err := MYSQL{}.DBdump(*db, tmpfhandle)

@@ -7,12 +7,16 @@ import (
 	"time"
 )
 
+var (
+	dbname   = os.Getenv("CBQD_DB_NAME")
+	identity = os.Getenv("CBQD_GPG_ID")
+)
+
 type MYSQL struct {
 }
 
 //Create command string to initiate backup of data
 func MakeCommandString(a Database) string {
-	dbname := os.Getenv("CBQD_DB_NAME")
 	if dbname == "" {
 		dbname = " -A "
 	}
@@ -27,7 +31,6 @@ func MakeEncryptString(gpgid string) string {
 //Take a data snapshot from the specified database
 func (a MYSQL) DBdump(d Database, tmpdir string) (string, error) {
 	objname := strings.Join([]string{"CBQD_DB_", time.Now().UTC().Format(time.RFC3339), ".sql"}, "")
-	identity := os.Getenv("CBQD_GPG_ID")
 	err := os.Chdir(tmpdir)
 	if err != nil {
 		return "", BACKUP_FOLDER_ERROR
