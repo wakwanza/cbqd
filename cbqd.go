@@ -15,9 +15,8 @@ type AccessCreds struct {
 }
 
 type Database struct {
-	Ukey AccessCreds
-	Host string
-	Port string
+	Ukey       AccessCreds
+	Host, Port string
 }
 
 var (
@@ -44,10 +43,6 @@ func (a AccessCreds) GetCreds(vbackend string, inout string, kvault bool) (Acces
 	return ac, VAULT_CREDENTIAL_ERROR
 }
 
-func (d *Database) SetTarget(ac AccessCreds, h string, p string) Database {
-	return Database{ac, h, p}
-}
-
 func Cbqd() {
 	flag.Parse()
 
@@ -56,7 +51,7 @@ func Cbqd() {
 		log.Fatalln(err)
 	}
 
-	db := &Database.SetTarget(increds, *dhflag, *dpflag)
+	db := Database{increds, *dhflag, *dpflag}
 	outcreds, err := new(AccessCreds).GetCreds(*csflag, "CBQD_OUT", *kvflag)
 	if err != nil {
 		log.Fatalln(err)
