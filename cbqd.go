@@ -44,8 +44,8 @@ func (a AccessCreds) GetCreds(vbackend string, inout string, kvault bool) (Acces
 	return ac, VAULT_CREDENTIAL_ERROR
 }
 
-func (d Database) SetTarget(ac AccessCreds, h string, p string) Database {
-	return Database{Ukey: ac, Host: h, Port: p}
+func (d *Database) SetTarget(ac AccessCreds, h string, p string) Database {
+	return Database{ac, h, p}
 }
 
 func Cbqd() {
