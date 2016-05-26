@@ -65,7 +65,7 @@ func Cbqd() {
 	defer os.RemoveAll(topdir)
 	tmpfhandle := filepath.Join(topdir, "tmpfile")
 
-	bname, err := MYSQL{}.DBdump(*db, tmpfhandle)
+	bname, err := MYSQL{}.DBdump(db, tmpfhandle)
 	if err != nil {
 		log.Fatalln(err)
 	}
