@@ -20,11 +20,12 @@ type Database struct {
 }
 
 var (
-	dbflag = flag.String("db", "mysql", "Database type to dump.")
-	csflag = flag.String("cs", "aws", "S3 storage repository to use.")
-	kvflag = flag.Bool("kv", false, "Access vault to acquire secrets.")
-	dhflag = flag.String("dh", "127.0.0.1", "Host IP for the database to be backuped up.")
-	dpflag = flag.String("dp", "3306", "Database port for access.")
+	dbflag  = flag.String("db", "mysql", "Database type to dump.")
+	csflag  = flag.String("cs", "aws", "S3 storage repository to use.")
+	kvflag  = flag.Bool("kv", false, "Access vault to acquire secrets.")
+	dhflag  = flag.String("dh", "127.0.0.1", "Host IP for the database to be backuped up.")
+	dpflag  = flag.String("dp", "3306", "Database port for access.")
+	version = formattedVersion()
 )
 
 func (a AccessCreds) GetCreds(vbackend string, inout string, kvault bool) (AccessCreds, error) {
@@ -43,9 +44,11 @@ func (a AccessCreds) GetCreds(vbackend string, inout string, kvault bool) (Acces
 	return ac, VAULT_CREDENTIAL_ERROR
 }
 
-func Cbqd() {
+func init() {
 	flag.Parse()
+}
 
+func Cbqd() {
 	increds, err := new(AccessCreds).GetCreds(*dbflag, "CBQD_IN", *kvflag)
 	if err != nil {
 		log.Fatalln(err)

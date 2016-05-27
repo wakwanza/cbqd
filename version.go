@@ -8,7 +8,7 @@ import (
 var GitCommit string
 
 const Name = "cbqd"
-const Version = "0.1.1"
+const Version = "0.1.2"
 const VersionPrerelease = ""
 
 // formattedVersion returns a formatted version string which includes the git
