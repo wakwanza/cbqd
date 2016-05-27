@@ -25,6 +25,7 @@ var (
 	kvflag  = flag.Bool("kv", false, "Access vault to acquire secrets.")
 	dhflag  = flag.String("dh", "127.0.0.1", "Host IP for the database to be backuped up.")
 	dpflag  = flag.String("dp", "3306", "Database port for access.")
+	vpflag  = flag.Bool("V", false, "Print the version number.")
 	version = formattedVersion()
 )
 
@@ -44,7 +45,12 @@ func (a AccessCreds) GetCreds(vbackend string, inout string, kvault bool) (Acces
 	return ac, VAULT_CREDENTIAL_ERROR
 }
 
+func usage() {
+	//
+}
+
 func init() {
+	flag.Usage = usage()
 	flag.Parse()
 }
 
