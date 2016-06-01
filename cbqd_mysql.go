@@ -3,7 +3,6 @@ package cbqd
 import (
 	"os"
 	"os/exec"
-	"strings"
 	"time"
 )
 
@@ -20,17 +19,17 @@ func MakeCommandString(a Database) string {
 	if dbname == "" {
 		dbname = " -A "
 	}
-	return strings.Join([]string{"mysqldump --single-transaction -q  -u ", a.Ukey.Dkey, " -p", a.Ukey.Dpass, " -h ", a.Host, " -P ", a.Port, " --database ", dbname, " "}, "")
+	return "mysqldump --single-transaction -q  -u " + a.Ukey.Dkey + " -p" + a.Ukey.Dpass + " -h " + a.Host + " -P " + a.Port + " --database " + dbname + " "
 }
 
 //Create command string to encrypt data dump and remove unecncrypted data
 func MakeEncryptString(gpgid string) string {
-	return strings.Join([]string{"gpg -W -e --yes -r ", gpgid, " "}, "")
+	return "gpg -W -e --yes -r " + gpgid + " "
 }
 
 //Take a data snapshot from the specified database
 func (a MYSQL) DBdump(d Database, tmpdir string) (string, error) {
-	objname := strings.Join([]string{"CBQD_DB_", time.Now().UTC().Format(time.RFC3339), ".sql"}, "")
+	objname := "CBQD_DB_" + time.Now().UTC().Format(time.RFC3339) + ".sql"
 	err := os.Chdir(tmpdir)
 	if err != nil {
 		return "", BACKUP_FOLDER_ERROR
@@ -42,7 +41,7 @@ func (a MYSQL) DBdump(d Database, tmpdir string) (string, error) {
 		if err := exec.Command(MakeEncryptString(identity), objname).Run(); err != nil {
 			return "", err
 		}
-		objnameg := strings.Join([]string{objname, ".gpg"}, "")
+		objnameg := objname + ".gpg"
 		return objnameg, nil
 	}
 	return objname, nil

@@ -11,6 +11,6 @@ var (
 	BACKUP_UPLOAD_ERROR            = errors.New("Backup could not be completed.Check the logs for more info.")
 	BACKUP_FOLDER_ERROR            = errors.New("Could not open the temporary work directory.")
 	BACKUP_ZIPROOT                 = errors.New("Could not create the output file for compression.")
-	OS_ENVIRONMENT_UNSET           = errors.New("No credentials have been set for the process.Check the ENV variables.")
+	OS_ENVIRONMENT_UNSET           = errors.New("No credentials have been set for CBQD.Check the ENV variables.")
 	VAULT_CREDENTIAL_ERROR         = errors.New("Vault faild to provide the access credentials.")
 )

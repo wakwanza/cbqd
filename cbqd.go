@@ -6,7 +6,6 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"strings"
 )
 
 type AccessCreds struct {
@@ -30,8 +29,8 @@ var (
 )
 
 func (a AccessCreds) GetCreds(vbackend string, inout string, kvault bool) (AccessCreds, error) {
-	un := strings.Join([]string{inout, "_KEY"}, "")
-	up := strings.Join([]string{inout, "_PASS"}, "")
+	un := inout + "_KEY"
+	up := inout + "_PASS"
 	ac := AccessCreds{}
 
 	if kvault == false {

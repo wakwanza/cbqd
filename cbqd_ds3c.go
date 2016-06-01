@@ -36,7 +36,7 @@ func (a AWS) CloudSend(s AccessCreds, cobject string, cpath string) error {
 
 	fpath := filepath.Join(cpath, cobject)
 
-	n, err := s3client.FPutObject(cbucket, cobject, fpath, "application/gzip")
+	n, err := s3client.FPutObject(cbucket, cobject, fpath, "application/x-gzip")
 	if err != nil {
 		return err
 	}
@@ -58,7 +58,7 @@ func (a GCS) CloudSend(s AccessCreds, cobject string, cpath string) error {
 
 	fpath := filepath.Join(cpath, cobject)
 
-	n, err := s3client.FPutObject(cbucket, cobject, fpath, "application/gzip")
+	n, err := s3client.FPutObject(cbucket, cobject, fpath, "application/x-gzip")
 	if err != nil {
 		return err
 	}
@@ -83,7 +83,7 @@ func (a ALT) CloudSend(s AccessCreds, cobject string, cpath string) error {
 
 	fpath := filepath.Join(cpath, cobject)
 
-	n, err := s3client.FPutObject(cbucket, cobject, fpath, "application/gzip")
+	n, err := s3client.FPutObject(cbucket, cobject, fpath, "application/x-gzip")
 	if err != nil {
 		return err
 	}
