@@ -49,7 +49,6 @@ func usage() {
 }
 
 func init() {
-	flag.Usage = usage()
 	flag.Parse()
 }
 
