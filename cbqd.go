@@ -2,8 +2,8 @@ package cbqd
 
 import (
 	"flag"
+	"github.com/op/go-logging"
 	"io/ioutil"
-	"log"
 	"os"
 	"path/filepath"
 )
@@ -19,13 +19,14 @@ type Database struct {
 }
 
 var (
-	dbflag  = flag.String("db", "mysql", "Database type to dump.")
-	csflag  = flag.String("cs", "aws", "S3 storage repository to use.")
-	kvflag  = flag.Bool("kv", false, "Access vault to acquire secrets.")
-	dhflag  = flag.String("dh", "127.0.0.1", "Host IP for the database to be backuped up.")
-	dpflag  = flag.String("dp", "3306", "Database port for access.")
-	vpflag  = flag.Bool("V", false, "Print the version number.")
-	version = formattedVersion()
+	dbflag = flag.String("db", "mysql", "Database type to dump.")
+	csflag = flag.String("cs", "aws", "S3 storage repository to use.")
+	kvflag = flag.Bool("kv", false, "Access vault to acquire secrets.")
+	dhflag = flag.String("dh", "127.0.0.1", "Host IP for the database to be backuped up.")
+	dpflag = flag.String("dp", "3306", "Database port for access.")
+	vpflag = flag.Bool("version", false, "Prints out the version number.")
+	veflag = formattedVersion()
+	lgform = logging.MustStringFormatter(`%{color}%{time:15:04:05.000} %{shortpkg} ▶ %{level:.4s} %{id:03x}%{color:reset} %{message}`)
 )
 
 func (a AccessCreds) GetCreds(vbackend string, inout string, kvault bool) (AccessCreds, error) {
@@ -50,23 +51,26 @@ func usage() {
 
 func init() {
 	flag.Parse()
+	bl1 := logging.NewLogBackend(os.Stderr, "", 0)
+	blf := logging.NewBackendFormatter(bl1, lgform)
 }
 
 func Cbqd() {
+	logging.SetBackend(bl1, blf)
 	increds, err := new(AccessCreds).GetCreds(*dbflag, "CBQD_IN", *kvflag)
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatal(err)
 	}
 
 	db := Database{increds, *dhflag, *dpflag}
 	outcreds, err := new(AccessCreds).GetCreds(*csflag, "CBQD_OUT", *kvflag)
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatal(err)
 	}
 
 	topdir, err := ioutil.TempDir("", "cbqd_state")
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatal(err)
 	}
 
 	defer os.RemoveAll(topdir)
@@ -74,12 +78,12 @@ func Cbqd() {
 
 	bname, err := MYSQL{}.DBdump(db, tmpfhandle)
 	if err != nil {
-		log.Fatalln(err)
+		log.Fatal(err)
 	}
 
 	err0 := AWS{}.CloudSend(outcreds, bname, tmpfhandle)
 	if err0 != nil {
-		log.Fatalln(BACKUP_UPLOAD_ERROR)
+		log.Fatal(BACKUP_UPLOAD_ERROR)
 	}
 
 }
