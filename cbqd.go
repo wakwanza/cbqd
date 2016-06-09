@@ -26,6 +26,7 @@ var (
 	dpflag = flag.String("dp", "3306", "Database port for access.")
 	vpflag = flag.Bool("version", false, "Prints out the version number.")
 	veflag = formattedVersion()
+	log    = logging.MustGetLogger("cbqd")
 	lgform = logging.MustStringFormatter(`%{color}%{time:15:04:05.000} %{shortpkg} ▶ %{level:.4s} %{id:03x}%{color:reset} %{message}`)
 )
 
