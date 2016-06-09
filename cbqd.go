@@ -39,7 +39,7 @@ func (a AccessCreds) GetCreds(vbackend string, inout string, kvault bool) (Acces
 		ac.Dkey = os.Getenv(un)
 		ac.Dpass = os.Getenv(up)
 		if ac.Dkey == "" && ac.Dpass == "" {
-			log.Fatalln(OS_ENVIRONMENT_UNSET)
+			log.Fatal(OS_ENVIRONMENT_UNSET)
 		}
 		return ac, nil
 	}
@@ -52,11 +52,11 @@ func usage() {
 
 func init() {
 	flag.Parse()
-	bl1 := logging.NewLogBackend(os.Stderr, "", 0)
-	blf := logging.NewBackendFormatter(bl1, lgform)
 }
 
 func Cbqd() {
+	bl1 := logging.NewLogBackend(os.Stderr, "", 0)
+	blf := logging.NewBackendFormatter(bl1, lgform)
 	logging.SetBackend(bl1, blf)
 	increds, err := new(AccessCreds).GetCreds(*dbflag, "CBQD_IN", *kvflag)
 	if err != nil {

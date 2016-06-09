@@ -2,7 +2,6 @@ package cbqd
 
 import (
 	mn "github.com/wakwanza/minio-go"
-	"log"
 	"os"
 	"path/filepath"
 )
@@ -40,7 +39,7 @@ func (a AWS) CloudSend(s AccessCreds, cobject string, cpath string) error {
 	if err != nil {
 		return err
 	}
-	log.Println("Uploaded ", n, " successfully.")
+	log.Info("Uploaded ", n, " successfully.")
 	return nil
 }
 
@@ -62,7 +61,7 @@ func (a GCS) CloudSend(s AccessCreds, cobject string, cpath string) error {
 	if err != nil {
 		return err
 	}
-	log.Println("Uploaded ", n, " successfully.")
+	log.Info("Uploaded ", n, " successfully.")
 	return nil
 }
 
@@ -87,6 +86,6 @@ func (a ALT) CloudSend(s AccessCreds, cobject string, cpath string) error {
 	if err != nil {
 		return err
 	}
-	log.Println("Uploaded ", n, " successfully.")
+	log.Info("Uploaded ", n, " successfully.")
 	return nil
 }
