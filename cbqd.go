@@ -2,7 +2,7 @@ package cbqd
 
 import (
 	"flag"
-	"github.com/op/go-logging"
+	"github.com/wakwanza/go-logging"
 	"io/ioutil"
 	"os"
 	"path/filepath"
@@ -28,6 +28,8 @@ var (
 	veflag = formattedVersion()
 	log    = logging.MustGetLogger("cbqd")
 	lgform = logging.MustStringFormatter(`%{color}%{time:15:04:05.000} %{shortpkg} ▶ %{level:.4s} %{id:03x}%{color:reset} %{message}`)
+	bl1    = logging.NewLogBackend(os.Stderr, "", 0)
+	blf    = logging.NewBackendFormatter(bl1, lgform)
 )
 
 func (a AccessCreds) GetCreds(vbackend string, inout string, kvault bool) (AccessCreds, error) {
@@ -52,12 +54,10 @@ func usage() {
 
 func init() {
 	flag.Parse()
+	logging.SetBackend(bl1, blf)
 }
 
 func Cbqd() {
-	bl1 := logging.NewLogBackend(os.Stderr, "", 0)
-	blf := logging.NewBackendFormatter(bl1, lgform)
-	logging.SetBackend(bl1, blf)
 	increds, err := new(AccessCreds).GetCreds(*dbflag, "CBQD_IN", *kvflag)
 	if err != nil {
 		log.Fatal(err)
