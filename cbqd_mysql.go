@@ -34,11 +34,11 @@ func (a MYSQL) DBdump(d Database, tmpdir string) (string, error) {
 	if err != nil {
 		return "", BACKUP_FOLDER_ERROR
 	}
-	if err := exec.Command(MakeCommandString(d), " > ", objname).Run(); err != nil {
+	if err = exec.Command(MakeCommandString(d), " > ", objname).Run(); err != nil {
 		return "", err
 	}
 	if identity != "" {
-		if err := exec.Command(MakeEncryptString(identity), objname).Run(); err != nil {
+		if err = exec.Command(MakeEncryptString(identity), objname).Run(); err != nil {
 			return "", err
 		}
 		objnameg := objname + ".gpg"

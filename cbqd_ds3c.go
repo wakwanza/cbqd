@@ -29,15 +29,15 @@ func (a AWS) CloudSend(s AccessCreds, cobject string, cpath string) error {
 	if cbucket == "" {
 		return S3_BUCKET_ERROR_1
 	}
-	if err := s3client.BucketExists(cbucket); err != nil {
+	if err2 := s3client.BucketExists(cbucket); err2 != nil {
 		return S3_BUCKET_ERROR_2
 	}
 
 	fpath := filepath.Join(cpath, cobject)
 
-	n, err := s3client.FPutObject(cbucket, cobject, fpath, "application/x-gzip")
-	if err != nil {
-		return err
+	n, err0 := s3client.FPutObject(cbucket, cobject, fpath, "application/x-gzip")
+	if err0 != nil {
+		return err0
 	}
 	log.Info("Uploaded ", n, " successfully.")
 	return nil
@@ -51,15 +51,15 @@ func (a GCS) CloudSend(s AccessCreds, cobject string, cpath string) error {
 	if cbucket == "" {
 		return S3_BUCKET_ERROR_1
 	}
-	if err = s3client.BucketExists(cbucket); err != nil {
+	if err2 = s3client.BucketExists(cbucket); err2 != nil {
 		return S3_BUCKET_ERROR_2
 	}
 
 	fpath := filepath.Join(cpath, cobject)
 
-	n, err := s3client.FPutObject(cbucket, cobject, fpath, "application/x-gzip")
-	if err != nil {
-		return err
+	n, err0 := s3client.FPutObject(cbucket, cobject, fpath, "application/x-gzip")
+	if err0 != nil {
+		return err0
 	}
 	log.Info("Uploaded ", n, " successfully.")
 	return nil
@@ -76,15 +76,15 @@ func (a ALT) CloudSend(s AccessCreds, cobject string, cpath string) error {
 	if cbucket == "" {
 		return S3_BUCKET_ERROR_1
 	}
-	if err = s3client.BucketExists(cbucket); err != nil {
+	if err2 = s3client.BucketExists(cbucket); err2 != nil {
 		return S3_BUCKET_ERROR_2
 	}
 
 	fpath := filepath.Join(cpath, cobject)
 
-	n, err := s3client.FPutObject(cbucket, cobject, fpath, "application/x-gzip")
-	if err != nil {
-		return err
+	n, err0 := s3client.FPutObject(cbucket, cobject, fpath, "application/x-gzip")
+	if err0 != nil {
+		return err0
 	}
 	log.Info("Uploaded ", n, " successfully.")
 	return nil

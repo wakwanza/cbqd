@@ -2,10 +2,10 @@ package cbqd
 
 import (
 	"flag"
+	"fmt"
 	"github.com/wakwanza/go-logging"
 	"io/ioutil"
 	"os"
-	"path/filepath"
 )
 
 type AccessCreds struct {
@@ -19,17 +19,13 @@ type Database struct {
 }
 
 var (
-	dbflag = flag.String("db", "mysql", "Database type to dump.")
-	csflag = flag.String("cs", "aws", "S3 storage repository to use.")
-	kvflag = flag.Bool("kv", false, "Access vault to acquire secrets.")
-	dhflag = flag.String("dh", "127.0.0.1", "Host IP for the database to be backuped up.")
-	dpflag = flag.String("dp", "3306", "Database port for access.")
-	vpflag = flag.Bool("version", false, "Prints out the version number.")
-	veflag = formattedVersion()
+	dbflag = flag.String("db", "mysql", "`Database type` to dump.")
+	csflag = flag.String("cs", "aws", "S3 `storage repository` to use.")
+	kvflag = flag.Bool("kv", false, "Access `vault` to acquire secrets.")
+	dhflag = flag.String("dh", "127.0.0.1", "`Host IP` for the database to be backed up.")
+	dpflag = flag.String("dp", "3306", "`Database port` for access.")
 	log    = logging.MustGetLogger("cbqd")
 	lgform = logging.MustStringFormatter(`%{color}%{time:15:04:05.000} %{shortpkg} ▶ %{level:.4s} %{id:03x}%{color:reset} %{message}`)
-	bl1    = logging.NewLogBackend(os.Stderr, "", 0)
-	blf    = logging.NewBackendFormatter(bl1, lgform)
 )
 
 func (a AccessCreds) GetCreds(vbackend string, inout string, kvault bool) (AccessCreds, error) {
@@ -48,42 +44,44 @@ func (a AccessCreds) GetCreds(vbackend string, inout string, kvault bool) (Acces
 	return ac, VAULT_CREDENTIAL_ERROR
 }
 
-func usage() {
-	//
-}
-
 func init() {
 	flag.Parse()
+	bl1 = logging.NewLogBackend(os.Stderr, "", 0)
+	blf = logging.NewBackendFormatter(bl1, lgform)
 	logging.SetBackend(bl1, blf)
 }
 
 func Cbqd() {
+	if vpflag == true {
+		fmt.Fprintln(formattedVersion())
+		os.Exit()
+	}
+
 	increds, err := new(AccessCreds).GetCreds(*dbflag, "CBQD_IN", *kvflag)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	db := Database{increds, *dhflag, *dpflag}
-	outcreds, err := new(AccessCreds).GetCreds(*csflag, "CBQD_OUT", *kvflag)
-	if err != nil {
-		log.Fatal(err)
+	outcreds, err0 := new(AccessCreds).GetCreds(*csflag, "CBQD_OUT", *kvflag)
+	if err0 != nil {
+		log.Fatal(err0)
 	}
 
-	topdir, err := ioutil.TempDir("", "cbqd_state")
-	if err != nil {
-		log.Fatal(err)
+	topdir, err1 := ioutil.TempDir("", "cbqd_db_state")
+	if err1 != nil {
+		log.Fatal(err1)
 	}
 
 	defer os.RemoveAll(topdir)
-	tmpfhandle := filepath.Join(topdir, "tmpfile")
 
-	bname, err := MYSQL{}.DBdump(db, tmpfhandle)
-	if err != nil {
-		log.Fatal(err)
+	bname, err2 := MYSQL{}.DBdump(db, topdir)
+	if err2 != nil {
+		log.Fatal(err2)
 	}
 
-	err0 := AWS{}.CloudSend(outcreds, bname, tmpfhandle)
-	if err0 != nil {
+	err3 := AWS{}.CloudSend(outcreds, bname, topdir)
+	if err3 != nil {
 		log.Fatal(BACKUP_UPLOAD_ERROR)
 	}
 
