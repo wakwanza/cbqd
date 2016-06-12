@@ -2,7 +2,6 @@ package cbqd
 
 import (
 	"flag"
-	"fmt"
 	"github.com/wakwanza/go-logging"
 	"io/ioutil"
 	"os"
