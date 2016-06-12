@@ -35,7 +35,7 @@ func (a MYSQL) DBdump(d Database, tmpdir string) (string, error) {
 		return "", BACKUP_FOLDER_ERROR
 	}
 	if err = exec.Command(MakeCommandString(d), " > ", objname).Run(); err != nil {
-		_, errm := os.exec.LookPath("mysqldump")
+		_, errm := exec.LookPath("mysqldump")
 		if errm != nil {
 			return "", DB_DUMP_ERROR_EXEC
 		}
