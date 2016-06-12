@@ -25,6 +25,8 @@ var (
 	dhflag = flag.String("dh", "127.0.0.1", "`Host IP` for the database to be backed up.")
 	dpflag = flag.String("dp", "3306", "`Database port` for access.")
 	log    = logging.MustGetLogger("cbqd")
+	bl1    = logging.NewLogBackend(os.Stderr, "", 0)
+	blf    = logging.NewBackendFormatter(bl1, lgform)
 	lgform = logging.MustStringFormatter(`%{color}%{time:15:04:05.000} %{shortpkg} ▶ %{level:.4s} %{id:03x}%{color:reset} %{message}`)
 )
 
@@ -46,17 +48,10 @@ func (a AccessCreds) GetCreds(vbackend string, inout string, kvault bool) (Acces
 
 func init() {
 	flag.Parse()
-	bl1 = logging.NewLogBackend(os.Stderr, "", 0)
-	blf = logging.NewBackendFormatter(bl1, lgform)
 	logging.SetBackend(bl1, blf)
 }
 
 func Cbqd() {
-	if vpflag == true {
-		fmt.Fprintln(formattedVersion())
-		os.Exit()
-	}
-
 	increds, err := new(AccessCreds).GetCreds(*dbflag, "CBQD_IN", *kvflag)
 	if err != nil {
 		log.Fatal(err)

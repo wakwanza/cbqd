@@ -29,7 +29,7 @@ func (a AWS) CloudSend(s AccessCreds, cobject string, cpath string) error {
 	if cbucket == "" {
 		return S3_BUCKET_ERROR_1
 	}
-	if err2 := s3client.BucketExists(cbucket); err2 != nil {
+	if err = s3client.BucketExists(cbucket); err != nil {
 		return S3_BUCKET_ERROR_2
 	}
 
@@ -51,7 +51,7 @@ func (a GCS) CloudSend(s AccessCreds, cobject string, cpath string) error {
 	if cbucket == "" {
 		return S3_BUCKET_ERROR_1
 	}
-	if err2 = s3client.BucketExists(cbucket); err2 != nil {
+	if err = s3client.BucketExists(cbucket); err != nil {
 		return S3_BUCKET_ERROR_2
 	}
 
@@ -76,7 +76,7 @@ func (a ALT) CloudSend(s AccessCreds, cobject string, cpath string) error {
 	if cbucket == "" {
 		return S3_BUCKET_ERROR_1
 	}
-	if err2 = s3client.BucketExists(cbucket); err2 != nil {
+	if err = s3client.BucketExists(cbucket); err != nil {
 		return S3_BUCKET_ERROR_2
 	}
 
