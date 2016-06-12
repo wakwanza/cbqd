@@ -34,6 +34,7 @@ func (a MYSQL) DBdump(d Database, tmpdir string) (string, error) {
 	if err != nil {
 		return "", BACKUP_FOLDER_ERROR
 	}
+	log.Info("initiate database data dump process.")
 	if err = exec.Command(MakeCommandString(d), " > ", objname).Run(); err != nil {
 		_, errm := exec.LookPath("mysqldump")
 		if errm != nil {
@@ -42,6 +43,7 @@ func (a MYSQL) DBdump(d Database, tmpdir string) (string, error) {
 		return "", DB_DUMP_ERROR
 	}
 	if identity != "" {
+		log.Info("begin data encryption process.")
 		if err = exec.Command(MakeEncryptString(identity), objname).Run(); err != nil {
 			return "", err
 		}
