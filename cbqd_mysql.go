@@ -17,7 +17,7 @@ type MYSQL struct {
 //Create command string to initiate backup of data
 func MakeCommandString(a Database) string {
 	if dbname == "" {
-		dbname = " -A "
+		dbname = "-A"
 	}
 	return "mysqldump --single-transaction -q  -u " + a.Ukey.Dkey + " -p" + a.Ukey.Dpass + " -h " + a.Host + " -P " + a.Port + " --database " + dbname + " "
 }
@@ -35,7 +35,11 @@ func (a MYSQL) DBdump(d Database, tmpdir string) (string, error) {
 		return "", BACKUP_FOLDER_ERROR
 	}
 	if err = exec.Command(MakeCommandString(d), " > ", objname).Run(); err != nil {
-		return "", err
+		_, errm := os.exec.LookPath("mysqldump")
+		if errm != nil {
+			return "", DB_DUMP_ERROR_EXEC
+		}
+		return "", DB_DUMP_ERROR
 	}
 	if identity != "" {
 		if err = exec.Command(MakeEncryptString(identity), objname).Run(); err != nil {
