@@ -15,6 +15,7 @@ type AccessCreds struct {
 type Database struct {
 	Ukey       AccessCreds
 	Host, Port string
+	Dtype      string
 }
 
 var (
@@ -56,7 +57,7 @@ func Cbqd() {
 		log.Fatal(err)
 	}
 
-	db := Database{increds, *dhflag, *dpflag}
+	db := Database{increds, *dhflag, *dpflag, *dbflag}
 	outcreds, err0 := new(AccessCreds).GetCreds(*csflag, "CBQD_OUT", *kvflag)
 	if err0 != nil {
 		log.Fatal(err0)
@@ -69,12 +70,13 @@ func Cbqd() {
 
 	defer os.RemoveAll(topdir)
 
-	bname, err2 := MYSQL{}.DBdump(db, topdir)
+	bname, err2 := SQLDB{}.DBdump(db, topdir)
 	if err2 != nil {
 		log.Fatal(err2)
 	}
 
-	err3 := AWS{}.CloudSend(outcreds, bname, topdir)
+	cstore := S3C{*csflag}
+	err3 := cstore.CloudSend(outcreds, bname, topdir)
 	if err3 != nil {
 		log.Fatal(BACKUP_UPLOAD_ERROR)
 	}

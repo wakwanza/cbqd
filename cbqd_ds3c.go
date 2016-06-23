@@ -12,64 +12,26 @@ var (
 	cregion   = os.Getenv("CBQD_S3_REGION")
 )
 
-type AWS struct {
+type S3C struct {
+	StoreURL string
 }
 
-type GCS struct {
-}
+func (a S3C) CloudSend(s AccessCreds, cobject string, cpath string) error {
 
-type ALT struct {
-}
-
-func (a AWS) CloudSend(s AccessCreds, cobject string, cpath string) error {
-	s3client, err := mn.New("s3.amazonaws.com", s.Dkey, s.Dpass, true)
-	if err != nil {
-		return err
-	}
-	if cbucket == "" {
-		return S3_BUCKET_ERROR_1
-	}
-	if err = s3client.BucketExists(cbucket); err != nil {
-		return S3_BUCKET_ERROR_2
-	}
-
-	fpath := filepath.Join(cpath, cobject)
-	log.Info("begin storage bucket upload process.")
-	n, err0 := s3client.FPutObject(cbucket, cobject, fpath, "application/x-gzip")
-	if err0 != nil {
-		return err0
-	}
-	log.Info("uploaded ", n, " successfully.")
-	return nil
-}
-
-func (a GCS) CloudSend(s AccessCreds, cobject string, cpath string) error {
-	s3client, err := mn.New("storage.googleapis.com", s.Dkey, s.Dpass, true)
-	if err != nil {
-		return err
-	}
-	if cbucket == "" {
-		return S3_BUCKET_ERROR_1
-	}
-	if err = s3client.BucketExists(cbucket); err != nil {
-		return S3_BUCKET_ERROR_2
-	}
-
-	fpath := filepath.Join(cpath, cobject)
-	log.Info("begin storage bucket upload process.")
-	n, err0 := s3client.FPutObject(cbucket, cobject, fpath, "application/x-gzip")
-	if err0 != nil {
-		return err0
-	}
-	log.Info("uploaded ", n, " successfully.")
-	return nil
-}
-
-func (a ALT) CloudSend(s AccessCreds, cobject string, cpath string) error {
-	if clocation == "" {
+	if a.StoreURL == "alt" && clocation == "" {
 		return S3_BUCKET_ERROR_3
 	}
-	s3client, err := mn.New(clocation, s.Dkey, s.Dpass, false)
+
+	switch a.StoreURL {
+	case "aws":
+		cloud_url := "s3.amazonaws.com"
+	case "gce":
+		cloud_url := "storage.googleapis.com"
+	case "alt":
+		cloud_url := clocation
+	}
+
+	s3client, err := mn.New(cloud_url, s.Dkey, s.Dpass, true)
 	if err != nil {
 		return err
 	}

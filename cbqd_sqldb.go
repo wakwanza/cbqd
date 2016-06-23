@@ -11,7 +11,7 @@ var (
 	identity = os.Getenv("CBQD_GPG_ID")
 )
 
-type MYSQL struct {
+type SQLDB struct {
 }
 
 //Create command string to initiate backup of data
@@ -19,16 +19,22 @@ func MakeCommandString(a Database) string {
 	if dbname == "" {
 		dbname = "-A"
 	}
-	return "mysqldump --single-transaction -q  -u " + a.Ukey.Dkey + " -p" + a.Ukey.Dpass + " -h " + a.Host + " -P " + a.Port + " --database " + dbname + " "
+	switch a.Dtype {
+	case "mysql":
+		return "mysqldump --single-transaction -q  -u " + a.Ukey.Dkey + " -p" + a.Ukey.Dpass + " -h " + a.Host + " -P " + a.Port + " --database " + dbname + " "
+	default:
+		log.Error(DB_TYPE_ERROR)
+	}
+
 }
 
 //Create command string to encrypt data dump and remove unecncrypted data
 func MakeEncryptString(gpgid string) string {
-	return "gpg -W -e --yes -r " + gpgid + " "
+	return "gpg2 -e --trust-model always -R " + gpgid + " "
 }
 
 //Take a data snapshot from the specified database
-func (a MYSQL) DBdump(d Database, tmpdir string) (string, error) {
+func (a SQLDB) DBdump(d Database, tmpdir string) (string, error) {
 	objname := "CBQD_DB_" + time.Now().UTC().Format(time.RFC3339) + ".sql"
 	err := os.Chdir(tmpdir)
 	if err != nil {
