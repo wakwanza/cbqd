@@ -25,7 +25,7 @@ func MakeCommandString(a Database) string {
 	default:
 		log.Error(DB_TYPE_ERROR)
 	}
-
+	return ""
 }
 
 //Create command string to encrypt data dump and remove unecncrypted data

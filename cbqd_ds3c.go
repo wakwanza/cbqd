@@ -21,14 +21,14 @@ func (a S3C) CloudSend(s AccessCreds, cobject string, cpath string) error {
 	if a.StoreURL == "alt" && clocation == "" {
 		return S3_BUCKET_ERROR_3
 	}
-
+	cloud_url := ""
 	switch a.StoreURL {
 	case "aws":
-		cloud_url := "s3.amazonaws.com"
+		cloud_url = "s3.amazonaws.com"
 	case "gce":
-		cloud_url := "storage.googleapis.com"
+		cloud_url = "storage.googleapis.com"
 	case "alt":
-		cloud_url := clocation
+		cloud_url = clocation
 	}
 
 	s3client, err := mn.New(cloud_url, s.Dkey, s.Dpass, true)
