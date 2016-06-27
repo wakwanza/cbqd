@@ -32,12 +32,20 @@ func MakeCommandString(a Database) string {
 //Encrypyt the database dump
 func EncryptDBdump(dbtxt string, dbgpg string) error {
 	pubkey, err0 := ioutil.ReadFile(*enflag)
+	sourcedata, err := os.OpenFile(dbtxt, os.O_RDONLY, 0660)
+	if err != nil {
+		log.Error(err)
+	}
+	encryptdata, err := os.OpenFile(dbgpg, os.O_RDWR|os.O_CREATE, 0660)
+	if err != nil {
+		log.Error(err)
+	}
 	if err0 != nil {
 		return GPG_KEY_ERROR
 	}
-	err := gp.Encode(pubkey, dbtxt, dbgpg)
-	if err != nil {
-		return err
+	err2 := gp.Encode(pubkey, sourcedata, encryptdata)
+	if err2 != nil {
+		return err2
 	}
 	return nil
 }
@@ -61,15 +69,7 @@ func (a SQLDB) DBdump(d Database, tmpdir string) (string, error) {
 	}
 	log.Info("database dump complete......begin data encryption process.")
 
-	sourcedata, err := os.OpenFile(objname, os.O_RDONLY, 0660)
-	if err != nil {
-		log.Error(err)
-	}
-	encryptdata, err := os.OpenFile(gpgname, os.O_RDWR|os.O_CREATE, 0660)
-	if err != nil {
-		log.Error(err)
-	}
-	err0 := EncryptDBdump(sourcedata, encryptdata)
+	err0 := EncryptDBdump(objname, gpgname)
 	if err0 == nil {
 		log.Info("data encryption complete")
 	} else {
