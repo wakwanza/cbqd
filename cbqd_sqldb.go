@@ -1,14 +1,15 @@
 package cbqd
 
 import (
+	gp "github.com/maxwellhealth/go-gpg"
+	"io/ioutil"
 	"os"
 	"os/exec"
 	"time"
 )
 
 var (
-	dbname   = os.Getenv("CBQD_DB_NAME")
-	identity = os.Getenv("CBQD_GPG_ID")
+	dbname = os.Getenv("CBQD_DB_NAME")
 )
 
 type SQLDB struct {
@@ -25,17 +26,27 @@ func MakeCommandString(a Database) string {
 	default:
 		log.Error(DB_TYPE_ERROR)
 	}
-	return ""
+	return nil
 }
 
-//Create command string to encrypt data dump and remove unecncrypted data
-func MakeEncryptString(gpgid string) string {
-	return "gpg2 -e --trust-model always -R " + gpgid + " "
+//Encrypyt the database dump
+func EncryptDBdump(dbtxt string, dbgpg string) error {
+	pubkey, err0 := ioutil.ReadFile(*enflag)
+	if err0 != nil {
+		return GPG_KEY_ERROR
+	}
+	err := gp.Encode(pubkey, dbtxt, dbgpg)
+	if err != nil {
+		return err
+	}
+	return nil
 }
 
 //Take a data snapshot from the specified database
 func (a SQLDB) DBdump(d Database, tmpdir string) (string, error) {
-	objname := "CBQD_DB_" + time.Now().UTC().Format(time.RFC3339) + ".sql"
+	tstamp := time.Now().UTC().Format(time.RFC3339)
+	objname := "CBQD_DB_" + tstamp + ".sql"
+	gpgname := "CBQD_DB_" + tstamp + ".gpg"
 	err := os.Chdir(tmpdir)
 	if err != nil {
 		return "", BACKUP_FOLDER_ERROR
@@ -48,13 +59,12 @@ func (a SQLDB) DBdump(d Database, tmpdir string) (string, error) {
 		}
 		return "", DB_DUMP_ERROR
 	}
-	if identity != "" {
-		log.Info("begin data encryption process.")
-		if err = exec.Command(MakeEncryptString(identity), objname).Run(); err != nil {
-			return "", err
-		}
-		objnameg := objname + ".gpg"
-		return objnameg, nil
+	log.Info("database dump complete......begin data encryption process.")
+	err0 := EncryptDBdump(objname, gpgname)
+	if err0 == nil {
+		log.Info("data encryption complete")
+	} else {
+		log.Info("data encryption could not be completed.")
 	}
-	return objname, nil
+	return gpgname, err0
 }

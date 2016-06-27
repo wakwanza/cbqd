@@ -19,11 +19,12 @@ type Database struct {
 }
 
 var (
-	dbflag = flag.String("db", "mysql", "`Database type` to dump.")
-	csflag = flag.String("cs", "aws", "S3 `storage repository` to use.")
+	dbflag = flag.String("db", "mysql", "`database type` to dump.")
+	csflag = flag.String("cs", "aws", "S3 `storage repository` for upload.")
 	kvflag = flag.Bool("kv", false, "Access `vault` to acquire secrets.")
-	dhflag = flag.String("dh", "127.0.0.1", "`Host IP` for the database to be backed up.")
-	dpflag = flag.String("dp", "3306", "`Database port` for access.")
+	dhflag = flag.String("dh", "127.0.0.1", "`host IP` for the database to be backed up.")
+	dpflag = flag.String("dp", "3306", "`database port` for access.")
+	enflag = flag.String("en", "cbqd.key", "`encryption key` location for gpg")
 	log    = logging.MustGetLogger("cbqd")
 	bl1    = logging.NewLogBackend(os.Stderr, "", 0)
 	blf    = logging.NewBackendFormatter(bl1, lgform)
