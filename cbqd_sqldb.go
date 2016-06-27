@@ -26,7 +26,7 @@ func MakeCommandString(a Database) string {
 	default:
 		log.Error(DB_TYPE_ERROR)
 	}
-	return nil
+	return "nil"
 }
 
 //Encrypyt the database dump
@@ -51,7 +51,7 @@ func (a SQLDB) DBdump(d Database, tmpdir string) (string, error) {
 	if err != nil {
 		return "", BACKUP_FOLDER_ERROR
 	}
-	log.Info("initiate database data dump process.")
+	log.Info("initiate database data dump process....")
 	if err = exec.Command(MakeCommandString(d), " > ", objname).Run(); err != nil {
 		_, errm := exec.LookPath("mysqldump")
 		if errm != nil {
@@ -60,7 +60,16 @@ func (a SQLDB) DBdump(d Database, tmpdir string) (string, error) {
 		return "", DB_DUMP_ERROR
 	}
 	log.Info("database dump complete......begin data encryption process.")
-	err0 := EncryptDBdump(objname, gpgname)
+
+	sourcedata, err := os.OpenFile(objname, os.O_RDONLY, 0660)
+	if err != nil {
+		log.Error(err)
+	}
+	encryptdata, err := os.OpenFile(gpgname, os.O_RDWR|os.O_CREATE, 0660)
+	if err != nil {
+		log.Error(err)
+	}
+	err0 := EncryptDBdump(sourcedata, encryptdata)
 	if err0 == nil {
 		log.Info("data encryption complete")
 	} else {
