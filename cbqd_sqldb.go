@@ -17,16 +17,13 @@ type SQLDB struct {
 
 //Create command string to initiate backup of data
 func MakeCommandString(a Database) string {
-	if dbname == "" {
-		dbname = "-A"
-	}
 	switch a.Dtype {
 	case "mysql":
 		return "mysqldump --single-transaction -q  -u " + a.Ukey.Dkey + " -p" + a.Ukey.Dpass + " -h " + a.Host + " -P " + a.Port + " --database " + dbname + " "
 	default:
-		log.Error(DB_TYPE_ERROR)
+		return ""
 	}
-	return "nil"
+	log.Error(DB_TYPE_ERROR)
 }
 
 //Encrypyt the database dump
@@ -52,9 +49,12 @@ func EncryptDBdump(dbtxt string, dbgpg string) error {
 
 //Take a data snapshot from the specified database
 func (a SQLDB) DBdump(d Database, tmpdir string) (string, error) {
+	if dbname == "" {
+		dbname = "-A"
+	}
 	tstamp := time.Now().UTC().Format(time.RFC3339)
-	objname := "CBQD_DB_" + tstamp + ".sql"
-	gpgname := "CBQD_DB_" + tstamp + ".gpg"
+	objname := tmpdir + "/" + "CBQD_DB_" + dbname + tstamp + ".sql"
+	gpgname := tmpdir + "/" + "CBQD_DB_" + dbname + tstamp + ".gpg"
 	err := os.Chdir(tmpdir)
 	if err != nil {
 		return "", BACKUP_FOLDER_ERROR
