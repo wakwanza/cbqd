@@ -35,7 +35,7 @@ func (a AccessCreds) GetCreds(vbackend string, inout string, kvault bool) (Acces
 	un := inout + "_KEY"
 	up := inout + "_PASS"
 	ac := AccessCreds{}
-	log.Info("acquire access credentials for databse and s3 store.")
+	log.Info("acquire access credentials for database and s3 store.")
 	if kvault == false {
 		ac.Dkey = os.Getenv(un)
 		ac.Dpass = os.Getenv(up)

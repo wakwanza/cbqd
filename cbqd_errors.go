@@ -14,7 +14,7 @@ var (
 	GPG_KEY_ERROR                  = errors.New("could not acquire the gpg public key for encrytion.")
 	OS_ENVIRONMENT_UNSET           = errors.New("no credentials have been set for CBQD.check the environment variables.")
 	VAULT_CREDENTIAL_ERROR         = errors.New("vault failed to provide the access credentials.")
-	DB_TYPE_ERROR                  = errors.New("unsupported datbase type.")
+	DB_TYPE_ERROR                  = errors.New("unsupported database type.")
 	DB_DUMP_ERROR                  = errors.New("could not execute the database backup command.")
 	DB_DUMP_ERROR_EXEC             = errors.New("could not execute the database backup command.executable file not found in $PATH")
 )
