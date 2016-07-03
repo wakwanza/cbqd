@@ -17,13 +17,15 @@ type SQLDB struct {
 
 //Create command string to initiate backup of data
 func MakeCommandString(a Database) string {
+	dbstring := ""
 	switch a.Dtype {
 	case "mysql":
-		return "mysqldump --single-transaction -q  -u " + a.Ukey.Dkey + " -p" + a.Ukey.Dpass + " -h " + a.Host + " -P " + a.Port + " --database " + dbname + " "
+		dbstring = "mysqldump --single-transaction -q  -u " + a.Ukey.Dkey + " -p" + a.Ukey.Dpass + " -h " + a.Host + " -P " + a.Port + " --database " + dbname + " "
 	default:
-		return ""
+		dbstring = ""
+		log.Error(DB_TYPE_ERROR)
 	}
-	log.Error(DB_TYPE_ERROR)
+	return dbstring
 }
 
 //Encrypyt the database dump
